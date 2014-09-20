@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resource/js/jquery-1.10.2.min.js"></script>
+<script>
+var wsocket;
+var serviceLocation = "ws://localhost:8080/hascode/zdarzenie/warszawa";
+var $nickName;
+var $demo;
+var $message;
+var room = '';
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+function connectToSocket() {
+	
+	wsocket = new WebSocket(serviceLocation);
+	wsocket.onmessage = onMessageReceived;
+}
+
+function showPosition(position) {
+	alert("Szerokoœæ geograficzna: " + position.coords.latitude + 
+    "<br>D³ugoœæ geograficzna: " + position.coords.longitude);	
+    var msg = '{"lokX":"' + String(position.coords.latitude) + '","lokY":"' + String(position.coords.longitude) + '","region":"warszawa","status":"status","uzytkownikRatujacy":"","uzytkownikWzywajacy":"","dataOdebrania":"","dataZgloszenia":""}';
+	var m = '{"uzytkownikWzywajacy":"","status":"status","uzytkownikRatujacy":"","region":"warszawa","lokX":"' + String(position.coords.latitude) + '","lokY":"' + String(position.coords.longitude) + '","dataOdebrania":"Sep 9, 2014 11:57:09 PM","dataZgloszenia":"Sep 9, 2014 11:57:09 PM"}';
+	wsocket.send(msg);
+	wsocket.send(m);
+	//alert(msg);
+}
+
+function onMessageReceived(evt) {
+	var msg = JSON.parse(evt.data); // native API
+	var $messageLine = $('<tr><td class="received">' + msg.lokX
+			+ '</td><td class="user label label-info">' + msg.lokY
+			+ '</td><td class="message badge">' + msg.status
+			+ '</td><td class="message badge">' + msg.uzytkownikRatujacy
+			+ '</td><td class="message badge">' + msg.uzytkownikWzywajacy
+			+ '</td><td class="message badge">' + msg.region
+			+ '</td><td class="message badge">' + msg.dataOdebrania
+			+ '</td><td class="message badge">' + msg.dataZgloszenia
+			+ '</td></tr>');
+	$demo.append($messageLine);
+	 
+}
+function sendMessage() {
+	var msg = '{"lokX":"' + position.coords.latitude + '","lokY":"' + position.coords.longitude + '","region":"warszawa","status":"status","uzytkownikRatujacy":"","uzytkownikWzywajacy":"","dataOdebrania":"Tue Sep 09 22:14:00 CEST 2014","dataZgloszenia":"Tue Sep 09 22:14:00 CEST 2014"}';
+	wsocket.send(msg);
+	$message.val('').focus();
+}
+
+
+
+$(document).ready(function() {
+	
+	$message = $('#message');
+	$demo = $('#demo');
+	connectToSocket();
+	
+	
+	
+	$('#pomocy').click(function(){
+		getLocation();
+	});
+});
+</script>
+
+</head>
+<body>
+
+<p id="demo">Zg³oœ potrzebê pomocy:</p>
+
+<button id="pomocy">Na pomoc</button>
+
+<input type="text" class="input-block-level" placeholder="" id="message" style="height:60px"/>
+					
+
+</body>
+</html>
