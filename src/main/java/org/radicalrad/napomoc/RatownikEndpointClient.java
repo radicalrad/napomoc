@@ -1,10 +1,13 @@
 package org.radicalrad.napomoc;
 
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.logging.Level;
 
+import javax.json.Json;
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
 import javax.websocket.DeploymentException;
@@ -12,29 +15,28 @@ import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
-import javax.websocket.Session;
 import javax.websocket.RemoteEndpoint.Basic;
+import javax.websocket.Session;
 
 import org.glassfish.tyrus.client.ClientManager;
-import org.radicalrad.napomoc.TestPomoc.ZdarzeniePomocyMessage;
 
 import com.google.gson.Gson;
+
+
+
 @ClientEndpoint
-public class TestRatownik {
+public class RatownikEndpointClient {
+	
 
 	@OnOpen
 	public void onOpen(Session session) {
-		PozycjaRatownikaMessage msg = new PozycjaRatownikaMessage();
-		//52.239364,21.045974
-		msg.setLokX("52.239364");
-		msg.setLokY("21.045974");		
-		msg.setUzytkownikRatujacy("rad@test.pl");
-		System.out.println(this.getClass().getName()+" tworzy zdarzenie");
+		/*
 		try {
-			//session.getUserProperties().put("region", "test");
-			System.out.println(this.getClass().getName()+" tworzy aktualizuje sesje");
+			
 			session.getBasicRemote().sendObject(msg);
 			
+			session.getUserProperties().put("lokX", "12,33");
+			session.getUserProperties().put("lok&", "52,33");
 			try {
 				for (Session s : session.getOpenSessions()) {
 						System.out.println("Sesja: "+s.toString());
@@ -58,6 +60,7 @@ public class TestRatownik {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 	}
 
 	@OnMessage
@@ -75,9 +78,8 @@ public class TestRatownik {
 	public static void main(String[] args) {
 		ClientManager client = ClientManager.createClient();
 	    try {
-	///pozycja/{uzytkownik}
-	    	String uzytkownik = "rad@test.pl";
-	        client.connectToServer(TestRatownik.class, new URI("ws://localhost:8080/hascode/pozycja/"+uzytkownik));
+	
+	        client.connectToServer(TestPomoc.class, new URI("ws://localhost:8080/hascode/zdarzenie/warszawa"));
 	        
 	     Thread.sleep(50);
 
@@ -91,4 +93,5 @@ public class TestRatownik {
 			e.printStackTrace();
 		} 
 	}
+
 }

@@ -99,8 +99,9 @@ public class TestPomoc {
 	@OnOpen
 	public void onOpen(Session session) {
 		ZdarzeniePomocyMessage msg = new ZdarzeniePomocyMessage();
-		msg.setLokX("123");
-		msg.setLokY("1234");
+		//52.239364,21.045974
+		msg.setLokX("52.239364");
+		msg.setLokY("21.045973");
 		msg.setRegion("warszawa");
 		msg.setStatus("status");
 		msg.setDataOdebrania(new Date());
@@ -156,7 +157,7 @@ public class TestPomoc {
 		ClientManager client = ClientManager.createClient();
 	    try {
 	
-	        client.connectToServer(TestPomoc.class, new URI("ws://localhost:8080/hascode/zdarzenie/warszawa"));
+	        client.connectToServer(TestPomoc.class, new URI("ws://localhost:8080/hascode/zdarzenie/rad@test.pl"));
 	        
 	     Thread.sleep(50);
 

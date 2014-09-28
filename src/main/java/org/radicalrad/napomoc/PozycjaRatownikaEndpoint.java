@@ -16,9 +16,9 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint(value = "/pozycja/{uzytkownik}", encoders = PozycjaRatownikaEncoder.class, decoders =PozycjaRatownikaDecoder.class)
 public class PozycjaRatownikaEndpoint {
 	private final Logger log = Logger.getLogger(getClass().getName());
-
+	private Dane c = Dane.getInstance();
 	@OnOpen
-	public void open(final Session session, @PathParam("uzytkownikRatujacy") final String uzytkownik) {
+	public void open(final Session session, @PathParam("uzytkownik") final String uzytkownik) {
 		log.info("session openend and bound to uzytkownik: " + uzytkownik);
 		session.getUserProperties().put("uzytkownikRatujacy", uzytkownik);
 	}
@@ -31,11 +31,9 @@ public class PozycjaRatownikaEndpoint {
 				
 			if (s.isOpen()
 					&& uzytkownik.equals(s.getUserProperties().get("uzytkownikRatujacy"))) {
-				String lokX = msg.getLokX();
-				String lokY = msg.getLokY();
 				
-				session.getUserProperties().put("lokX", lokX);
-				session.getUserProperties().put("lokY", lokY);
+				
+				c.aktualizujPozycjeRatownika(msg);
 				
 			}
 		}

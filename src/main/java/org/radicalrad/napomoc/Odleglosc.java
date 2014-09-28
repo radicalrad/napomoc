@@ -1,5 +1,6 @@
 package org.radicalrad.napomoc;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.geotools.geometry.jts.JTS;
@@ -39,7 +40,7 @@ public class Odleglosc {
 			}
 			
 	    }
-	    
+	 
 		   
 	    public double getOdleglosc() {
 			return odleglosc;

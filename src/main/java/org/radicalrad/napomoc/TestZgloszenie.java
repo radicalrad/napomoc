@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.logging.Level;
 
+import javax.json.Json;
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
 import javax.websocket.DeploymentException;
@@ -12,50 +14,49 @@ import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
-import javax.websocket.Session;
 import javax.websocket.RemoteEndpoint.Basic;
+import javax.websocket.Session;
 
 import org.glassfish.tyrus.client.ClientManager;
-import org.radicalrad.napomoc.TestPomoc.ZdarzeniePomocyMessage;
 
 import com.google.gson.Gson;
-@ClientEndpoint
-public class TestRatownik {
 
+
+
+@ClientEndpoint
+public class TestZgloszenie {
+	
 	@OnOpen
 	public void onOpen(Session session) {
-		PozycjaRatownikaMessage msg = new PozycjaRatownikaMessage();
+		ZdarzeniePomocyMessage msg = new ZdarzeniePomocyMessage();
 		//52.239364,21.045974
 		msg.setLokX("52.239364");
-		msg.setLokY("21.045974");		
-		msg.setUzytkownikRatujacy("rad@test.pl");
+		msg.setLokY("21.045973");
+		msg.setRegion("warszawa");
+		msg.setStatus("status");
+		msg.setDataOdebrania(new Date());
+		msg.setDataZgloszenia(new Date());
+		msg.setUzytkownikRatujacy("");
+		msg.setUzytkownikWzywajacy("test-wzywajacy");
 		System.out.println(this.getClass().getName()+" tworzy zdarzenie");
+		//session.getUserProperties().put("region", "test");
+		System.out.println(this.getClass().getName()+" tworzy aktualizuje sesje");
+		//session.getBasicRemote().sendObject(msg);
+		
+		
 		try {
-			//session.getUserProperties().put("region", "test");
-			System.out.println(this.getClass().getName()+" tworzy aktualizuje sesje");
-			session.getBasicRemote().sendObject(msg);
-			
-			try {
-				for (Session s : session.getOpenSessions()) {
-						System.out.println("Sesja: "+s.toString());
-						Basic b = s.getBasicRemote();
-						System.out.println("Props: "+s.getUserProperties().toString());
-						Gson gson = new Gson();
-						String json = gson.toJson(msg); 
-						System.out.println("json: "+json);
-						b.sendText(json);
-							
-					
-				}
-			} catch (IOException  e) {
-				e.printStackTrace();
+			for (Session s : session.getOpenSessions()) {
+					System.out.println("Sesja: "+s.toString());
+					Basic b = s.getBasicRemote();
+					System.out.println("Props: "+s.getUserProperties().toString());
+					Gson gson = new Gson();
+					String json = gson.toJson(msg); 
+					System.out.println("json: "+json);
+					b.sendText(json);
+						
+				
 			}
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (EncodeException e) {
-			// TODO Auto-generated catch block
+		} catch (IOException  e) {
 			e.printStackTrace();
 		}
 	}
@@ -75,9 +76,8 @@ public class TestRatownik {
 	public static void main(String[] args) {
 		ClientManager client = ClientManager.createClient();
 	    try {
-	///pozycja/{uzytkownik}
-	    	String uzytkownik = "rad@test.pl";
-	        client.connectToServer(TestRatownik.class, new URI("ws://localhost:8080/hascode/pozycja/"+uzytkownik));
+	
+	        client.connectToServer(TestPomoc.class, new URI("ws://localhost:8080/hascode/zgloszenie/test-wzywajacy"));
 	        
 	     Thread.sleep(50);
 
@@ -91,4 +91,5 @@ public class TestRatownik {
 			e.printStackTrace();
 		} 
 	}
+
 }
